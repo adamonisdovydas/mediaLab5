@@ -1,7 +1,23 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
+    <meta charset="utf-8">
+    <meta name="description" content="WebRTC code samples">
+    <meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1, maximum-scale=1">
+    <meta itemprop="description" content="Client-side WebRTC code samples">
+    <meta itemprop="image" content="images/webrtc-icon-192x192.png">
+    <meta itemprop="name" content="WebRTC code samples">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta id="theme-color" name="theme-color" content="#ffffff">
+    <base target="_blank">
+    <link rel="icon" sizes="192x192" href="images/webrtc-icon-192x192.png">
+    <link href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        video {
+            object-fit: cover;
+        }
+    </style>
   <title> CREATE WebRTC channel </title>
   <link href="noserv.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -19,11 +35,26 @@
   </div>
   <div id="ct"><input id="msg" disabled><button id="send" disabled>send</button></div>
 </div>
+
+<div id="container">
+    <video playsinline autoplay></video>
+    <canvas></canvas>
+</div>
+
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+<script src="js/main.js" async></script>
+
 <script>
 //var server       = { urls: "stun:stun.l.google.com:19302" };
 var sdpConstraints = { optional: [{RtpDataChannels: true}]  };
 var pc = new RTCPeerConnection(null);
 var dc;
+
+	const canvas = window.canvas = document.querySelector('canvas');
+	canvas.style.display="none";
+	canvas.width = 100;
+	canvas.height = 100;
+	var pngUrl;
 
 pc.oniceconnectionstatechange = function(e) {
   var state = pc.iceConnectionState;
@@ -51,7 +82,6 @@ function start() {
   var answerDesc = new RTCSessionDescription(JSON.parse(answerSDP));
   pc.setRemoteDescription(answerDesc);
 }
-
 var addMSG = function(msg, who) {
   var wrap = $("<div>").addClass("wrap").appendTo($("#chat-screen"));
   var div  = $("<div>").addClass(who).appendTo(wrap);
@@ -62,13 +92,18 @@ var addMSG = function(msg, who) {
 
 createOfferSDP();
 
-var sendMSG = function() {
-  var value = $("#msg").val();
+function sendMSG() {
+
+	canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+	pngUrl = canvas.toDataURL();
+
+  var value = pngUrl;//$("#msg").val();
   if (value) {
     dc.send(value);
     addMSG(value, "me");
     $("#msg").val('');
   }
+
 }
 $("#start").click(function(){start();});
 $("#msg").keypress(function(e) {if(e.which == 13) {sendMSG()}});

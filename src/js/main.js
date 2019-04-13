@@ -7,21 +7,7 @@
  */
 
 'use strict';
-
-const snapshotButton = document.querySelector('button#snapshot');
-
-// Put variables in global scope to make them available to the browser console.
 const video = window.video = document.querySelector('video');
-const canvas = window.canvas = document.querySelector('canvas');
-canvas.width = 480;
-canvas.height = 360;
-var pngUrl;
-
-snapshotButton.onclick = function() {
-  canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-  pngUrl = canvas.toDataURL();
-  document.getElementById("code").value = pngUrl;
-};
 
 const constraints = {
   audio: false,
